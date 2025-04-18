@@ -6,6 +6,7 @@ export interface Reminder {
   name: string;
   dosage: string;
   time: string;
+  slot: string; // Added slot property
 }
 
 // Define the context type

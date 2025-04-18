@@ -60,6 +60,10 @@ export default function ViewRemindersScreen({ navigation }: { navigation: any })
                       <Text style={styles.labelText}>Time: </Text>
                       {item.time}
                     </Text>
+                    <Text style={styles.reminderDetails}>
+                      <Text style={styles.labelText}>Slot: </Text>
+                      {item.slot || "N/A"}
+                    </Text>
                   </View>
                   <TouchableOpacity 
                     style={styles.deleteButton}

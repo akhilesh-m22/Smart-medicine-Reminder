@@ -35,11 +35,13 @@ export default function AddReminderScreen({ navigation }: { navigation: any }) {
   const [selectedHour, setSelectedHour] = useState<number>(12);
   const [selectedMinute, setSelectedMinute] = useState<number>(0);
   const [selectedAmPm, setSelectedAmPm] = useState<string>("AM");
+  const [selectedSlot, setSelectedSlot] = useState<string>("1");
   const { addReminder } = useContext(RemindersContext);
 
   const hours = Array.from({ length: 12 }, (_, i) => ({ label: (i + 1).toString(), value: (i + 1) }));
   const minutes = Array.from({ length: 60 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
   const ampm = [{ label: "AM", value: "AM" }, { label: "PM", value: "PM" }];
+  const slots = [{ label: "Slot 1", value: "1" }, { label: "Slot 2", value: "2" }];
 
   const validateMedicine = () => {
     const medicine = validMedicines.find(
@@ -79,13 +81,20 @@ export default function AddReminderScreen({ navigation }: { navigation: any }) {
 
     const formattedTime = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')} ${selectedAmPm}`;
 
-    addReminder({ id: Date.now().toString(), name: medicineName, dosage, time: formattedTime });
+    addReminder({ 
+      id: Date.now().toString(), 
+      name: medicineName, 
+      dosage, 
+      time: formattedTime,
+      slot: selectedSlot 
+    });
     Alert.alert("Success", "Reminder added successfully!");
     setMedicineName("");
     setDosage("");
     setSelectedHour(12);
     setSelectedMinute(0);
     setSelectedAmPm("AM");
+    setSelectedSlot("1");
     navigation.goBack();
   };
 
@@ -127,6 +136,28 @@ export default function AddReminderScreen({ navigation }: { navigation: any }) {
                   onChangeText={setDosage}
                   keyboardType="numeric"
                 />
+              </View>
+            </View>
+            
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputLabel}>Slot Number</Text>
+              <View style={styles.slotContainer}>
+                <Ionicons name="file-tray-full" size={20} color="#4c669f" style={styles.inputIcon} />
+                <View style={styles.slotPickerContainer}>
+                  <RNPickerSelect
+                    placeholder={{}}
+                    items={slots}
+                    onValueChange={(value: string) => {
+                      if (value !== null) {
+                        setSelectedSlot(value);
+                      }
+                    }}
+                    value={selectedSlot}
+                    style={pickerSelectStyles}
+                    useNativeAndroidPickerStyle={false}
+                  />
+                  <Text style={styles.selectedDisplayText}>Slot {selectedSlot}</Text>
+                </View>
               </View>
             </View>
             
@@ -411,6 +442,30 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  slotContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  slotPickerContainer: {
+    flex: 1,
+    height: 45,
+    justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
   },
 });
 
