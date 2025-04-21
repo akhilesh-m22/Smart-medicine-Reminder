@@ -54,7 +54,8 @@ const validMedicines = [
  * @returns {JSX.Element} Rendered component
  */
 export default function AddReminderScreen({ navigation }: { navigation: any }) {
-  // State for form inputs
+  // Replace with your ESP32 IP address
+  const ESP32_IP = "192.168.241.163";
   const [medicineName, setMedicineName] = useState("");
   const [dosage, setDosage] = useState("");
   const [selectedHour, setSelectedHour] = useState<number>(12);
@@ -128,6 +129,16 @@ export default function AddReminderScreen({ navigation }: { navigation: any }) {
       time: formattedTime,
       slot: selectedSlot 
     });
+    // convert selected time to 24h
+    const hour24 = selectedAmPm === 'PM' ? (selectedHour % 12) + 12 : (selectedHour % 12);
+    const minute = selectedMinute;
+    // Send update to ESP32 with time params
+    fetch(
+      `http://${ESP32_IP}/update?name=${encodeURIComponent(medicineName)}` +
+      `&slot=${selectedSlot}&hour=${hour24}&minute=${minute}`
+    )
+      .then(res => console.log('ESP32 response', res.status))
+      .catch(err => console.error('Error sending to ESP32', err));
     Alert.alert("Success", "Reminder added successfully!");
     setMedicineName("");
     setDosage("");
