@@ -1,11 +1,35 @@
+/**
+ * ViewRemindersScreen.tsx
+ * 
+ * This component displays all the medication reminders stored in the application.
+ * It allows users to:
+ * - View all their medication reminders in a list
+ * - Delete reminders
+ * - Receive alerts when it's time to take medication
+ * 
+ * The component accesses the global reminders state through RemindersContext.
+ */
 import React, { useContext, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, SafeAreaView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { RemindersContext, Reminder } from "./ReminderContext";
 
+/**
+ * ViewRemindersScreen Component
+ * 
+ * @param {object} navigation - React Navigation object used for screen transitions
+ * @returns {JSX.Element} Rendered component
+ */
 export default function ViewRemindersScreen({ navigation }: { navigation: any }) {
+  // Access reminders data and deleteReminder function from context
   const { reminders, deleteReminder } = useContext(RemindersContext);
 
+  /**
+   * Set up medication reminder alerts
+   * 
+   * Checks every minute if any medication should be taken,
+   * and shows an alert when it's time for a reminder.
+   */
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -22,6 +46,12 @@ export default function ViewRemindersScreen({ navigation }: { navigation: any })
     return () => clearInterval(interval);
   }, [reminders]);
 
+  /**
+   * Handles the deletion of a reminder
+   * Shows a confirmation dialog before deleting
+   * 
+   * @param {string} id - ID of the reminder to delete
+   */
   const handleDelete = (id: string) => {
     Alert.alert(
       "Delete Reminder",

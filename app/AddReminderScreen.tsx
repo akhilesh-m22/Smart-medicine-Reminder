@@ -1,10 +1,28 @@
+/**
+ * AddReminderScreen.tsx
+ * 
+ * This component provides a form interface for users to add new medication reminders.
+ * Features:
+ * - Input fields for medicine name and dosage
+ * - Time selection with hour, minute, and AM/PM pickers
+ * - Slot selection for the physical medicine dispenser
+ * - Validation for medicine names and dosages
+ * 
+ * The component uses the RemindersContext to add new reminders to the global state.
+ */
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { RemindersContext } from "./ReminderContext"; // Updated import
+import { RemindersContext } from "./ReminderContext";
 import RNPickerSelect from 'react-native-picker-select';
 
-// Expanded list of valid medicines and their dosage ranges
+/**
+ * List of valid medications with their dosage ranges
+ * Each medication object contains:
+ * - name: Name of the medication
+ * - minDosage: Minimum recommended dosage
+ * - maxDosage: Maximum recommended dosage
+ */
 const validMedicines = [
   { name: "Paracetamol", minDosage: 1, maxDosage: 2 }, // Example: 1-2 tablets
   { name: "Vitamin C", minDosage: 1, maxDosage: 1 },   // Example: 1 tablet
@@ -29,20 +47,37 @@ const validMedicines = [
   { name: "Insulin", minDosage: 1, maxDosage: 2 },     // For diabetes
 ];
 
+/**
+ * AddReminderScreen Component
+ * 
+ * @param {object} navigation - React Navigation object used for screen transitions
+ * @returns {JSX.Element} Rendered component
+ */
 export default function AddReminderScreen({ navigation }: { navigation: any }) {
+  // State for form inputs
   const [medicineName, setMedicineName] = useState("");
   const [dosage, setDosage] = useState("");
   const [selectedHour, setSelectedHour] = useState<number>(12);
   const [selectedMinute, setSelectedMinute] = useState<number>(0);
   const [selectedAmPm, setSelectedAmPm] = useState<string>("AM");
   const [selectedSlot, setSelectedSlot] = useState<string>("1");
+  
+  // Access addReminder function from context
   const { addReminder } = useContext(RemindersContext);
 
+  // Data for dropdown pickers
   const hours = Array.from({ length: 12 }, (_, i) => ({ label: (i + 1).toString(), value: (i + 1) }));
   const minutes = Array.from({ length: 60 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
   const ampm = [{ label: "AM", value: "AM" }, { label: "PM", value: "PM" }];
   const slots = [{ label: "Slot 1", value: "1" }, { label: "Slot 2", value: "2" }];
 
+  /**
+   * Validates the medicine name and dosage
+   * Checks if the medicine exists in the valid medicines list
+   * Verifies if the dosage is within the recommended range
+   * 
+   * @returns {boolean} Whether the medicine and dosage are valid
+   */
   const validateMedicine = () => {
     const medicine = validMedicines.find(
       (med) => med.name.toLowerCase() === medicineName.trim().toLowerCase()
@@ -64,6 +99,11 @@ export default function AddReminderScreen({ navigation }: { navigation: any }) {
     return true;
   };
 
+  /**
+   * Handles the reminder creation process
+   * Validates inputs, creates a new reminder object, and adds it to the global state
+   * Resets the form fields after successful addition
+   */
   const handleAddReminder = () => {
     if (!medicineName.trim() || !dosage.trim()) {
       Alert.alert("Error", "Please fill all fields");

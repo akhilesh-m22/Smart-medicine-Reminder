@@ -1,3 +1,7 @@
+/**
+ * Main entry point for the Smart Medicine Reminder application
+ * Sets up navigation and global state management for reminders
+ */
 import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
@@ -5,11 +9,27 @@ import AddReminderScreen from "./AddReminderScreen";
 import ViewRemindersScreen from "./ViewRemindersScreen";
 import { RemindersContext, Reminder } from "./ReminderContext";
 
+// Create the navigation stack for the application
 const Stack = createStackNavigator();
 
+/**
+ * HomeScreen Component
+ * 
+ * Displays the main landing screen of the application with:
+ * - Real-time clock display
+ * - App logo and title
+ * - Navigation buttons to add and view reminders
+ * 
+ * @param {object} navigation - Navigation object from React Navigation
+ */
 function HomeScreen({ navigation }: { navigation: any }) {
+  // State to track and display current time
   const [currentTime, setCurrentTime] = useState("");
 
+  /**
+   * Effect hook to update the clock display every second
+   * Sets up interval and cleans it up when component unmounts
+   */
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -53,13 +73,31 @@ function HomeScreen({ navigation }: { navigation: any }) {
   );
 }
 
+/**
+ * App Component - Root component of the application
+ * 
+ * Provides:
+ * - Global state management through RemindersContext
+ * - Navigation structure with Stack Navigator
+ * 
+ * @returns {JSX.Element} The complete application with navigation and state management
+ */
 export default function App() {
+  // Initialize reminders state array
   const [reminders, setReminders] = useState<Reminder[]>([]);
 
+  /**
+   * Adds a new reminder to the global state
+   * @param {Reminder} reminder - New reminder object to be added
+   */
   const addReminder = (reminder: Reminder) => {
     setReminders((prevReminders) => [...prevReminders, reminder]);
   };
 
+  /**
+   * Deletes a reminder from the global state by ID
+   * @param {string} id - ID of the reminder to be deleted
+   */
   const deleteReminder = (id: string) => {
     setReminders((prevReminders) => prevReminders.filter((reminder) => reminder.id !== id));
   };
@@ -81,6 +119,10 @@ export default function App() {
   );
 }
 
+/**
+ * Styles for components in the application
+ * Defines layout, colors, shadows, and text formatting
+ */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
